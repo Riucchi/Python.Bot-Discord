@@ -1,4 +1,4 @@
-# Python.Bot-Discord
+# Python Bot For Discord
 Bot for playing music on discord made with python
 
 
