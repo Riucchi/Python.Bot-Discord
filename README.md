@@ -30,7 +30,7 @@ This bot Has the next commands for use:
 <li>/resume - Resume the last song paused</li>
 
 
-<p>for running it just install the dependencies, make and .env archive with your APP-TOKEN from discord then, copy the ID from the server that will the bot first connect when u start it and add as enviroment variables.
+<p>for running it just install the dependencies, make and .env archive and add as enviroment variables  your APP-TOKEN from discord then, copy the ID from the server that will the bot first connect when u start it.
 
 then run the archive main with the next command:
 python main.py</p>
