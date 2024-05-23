@@ -5,11 +5,11 @@ Bot for playing music on discord made with python
 The Librarys needed for use this on your pc:
 
 
-discord.py==3.2.1
+<li>discord.py==3.2.1
 asyncio
 ffmpeg
 yt-dlp
-python-decouple
+python-decouple</li>
 
 
 
