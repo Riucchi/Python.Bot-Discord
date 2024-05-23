@@ -1,0 +1,5 @@
+asyncio
+ffmpeg
+discord.py
+yt-dlp
+python-decouple
