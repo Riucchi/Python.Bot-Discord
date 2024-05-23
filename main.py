@@ -74,6 +74,15 @@ class MyClient(discord.Client):
         # This copies the global commands over to your guild.
         self.tree.copy_global_to(guild=MY_GUILD)
         await self.tree.sync(guild=MY_GUILD)
+        await self.tree.sync()
+
+    async def play_next(self, interaction):
+        if self.queue:
+            player = self.queue.pop(0)
+            guild = interaction.guild
+            guild.voice_client.play(player, after=lambda e: asyncio.run_coroutine_threadsafe(self.play_next(interaction), self.loop))
+        else:
+            await interaction.response.send_message("No more songs in queue")
 
 intents = discord.Intents.default()
 client = MyClient(intents=intents)
@@ -88,14 +97,6 @@ async def entrar(interaction: discord.Interaction):
     else:
         await interaction.response.send_message("You must be in a voice channel to use this command")
 
-@client.event
-async def play_next(interaction):
-    if client.queue:
-        player = client.queue.pop(0)
-        guild = interaction.guild
-        guild.voice_client.play(player, after=lambda e: print(f'Player error: {e}') if e else client.play_next(interaction))
-    else:
-        await interaction.response.send_message("No more songs in queue")
 
 client.queue = []
 
@@ -149,6 +150,7 @@ async def stop(interaction: discord.Interaction):
 async def skip(interaction: discord.Interaction):
     """ Skips the current song """
     if client.current_voice_channel and client.current_voice_channel.is_playing():
+        await interaction.response.send_message("Skipping to the next song...")
         client.current_voice_channel.stop()
         await client.play_next(interaction)
     else:
