@@ -22,18 +22,17 @@ thanks and hope u enjoy the repository!
 
 This bot Has the next commands for use:
 
-/entrar - Joins the Channel
-/Reproducir + url - Start Playing the song from the url
-/skip - Skip to the next song if there any on queue
-/stop - Stop the music and leave the Voice Channel
-/pause - Stop the current playing song
-/resume - Resume the last song paused
+<li>/entrar - Joins the Channel</li>
+<li>/Reproducir + url - Start Playing the song from the url</li>
+<li>/skip - Skip to the next song if there any on queue</li>
+<li>/stop - Stop the music and leave the Voice Channel</li>
+<li>/pause - Stop the current playing song</li>
+<li>/resume - Resume the last song paused</li>
 
 
-for running it just install the dependencies, make and .env archive with your APP-TOKEN from discord then, copy the ID from the server that will the bot first connect when u start it and add as enviroment variables.
+<p>for running it just install the dependencies, make and .env archive with your APP-TOKEN from discord then, copy the ID from the server that will the bot first connect when u start it and add as enviroment variables.
 
-then run the archive main with the next command
-
-python main.py
+then run the archive main with the next command:
+python main.py</p>
 
 Enjoy
