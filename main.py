@@ -73,17 +73,13 @@ class MyClient(discord.Client):
         await self.tree.sync()
 
     async def play_next(self, interaction, skipped=False):
-        print("play_next called")
         if self.queue:
-            print("Queue is not empty")
             player = self.queue.pop(0)
-            print(f"Playing next song: {player.title}")
             guild = interaction.guild
             guild.voice_client.play(player, after=lambda e: asyncio.run_coroutine_threadsafe(self.play_next(interaction, skipped=True), self.loop))
             if not skipped:
                 await interaction.followup.send(f"Playing {player.title}")
         else:
-            print("Queue is empty")
             await interaction.followup.send("No more songs in queue")
 
 intents = discord.Intents.default()
@@ -150,9 +146,7 @@ async def stop(interaction: discord.Interaction):
 
 @client.tree.command()
 async def skip(interaction: discord.Interaction):
-    print("skip command called")
     if client.current_voice_channel and client.current_voice_channel.is_playing():
-        print("Stopping current song")
         client.current_voice_channel.stop()
         if client.queue:
             await client.play_next(interaction, skipped=True)
