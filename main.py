@@ -18,7 +18,7 @@ ytdl_options = {
     'format': 'bestaudio/best',
     'yesplaylist': True,  # Enable playlist support
     'noplaylist': None,  # Allow playlist parsing
-    'playlist_items': '1-20',  # Stream items 1 to 10 from the playlist
+    'playlist_items': '1-30',  # Stream items 1 to 10 from the playlist
     'quiet': True,
     'no_warnings': True,
     'default_search': 'auto',
