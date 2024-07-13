@@ -16,16 +16,13 @@ MY_GUILD = discord.Object(id=int(env_config.get('GUILD')))
 # Setup Youtube DL library
 ytdl_options = {
     'format': 'bestaudio/best',
-    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
-    'restrictfilenames': True,
-    'noplaylist': False,
-    'nocheckcertificate': True,
-    'ignoreerrors': False,
-    'logtostderr': False,
+    'yesplaylist': True,  # Enable playlist support
+    'noplaylist': None,  # Allow playlist parsing
+    'playlist_items': '1-20',  # Stream items 1 to 10 from the playlist
     'quiet': True,
     'no_warnings': True,
     'default_search': 'auto',
-    'source_address': '0.0.0.0',  # bind to ipv4 since ipv6 addresses cause issues sometimes
+    'ource_address': '0.0.0.0',  # bind to ipv4 since ipv6 addresses cause issues sometimes
 }
 
 #setup FFmpeg
@@ -51,17 +48,16 @@ class YTDLSource(discord.PCMVolumeTransformer):
         data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
 
         if 'entries' in data:
-            # take first item from a playlist
-            data = data['entries'][0]
-            sources = []
-
-            for entry in data['entries']:
-                filename = entry['url'] if stream else ytdl.prepare_filename(entry)
-                source = discord.FFmpegPCMAudio(executable="C:/ffmpeg/bin/ffmpeg.exe", source=filename, **ffmpeg_options)
-                sources.append(cls(source, data=entry))
-
-        filename = data['url'] if stream else ytdl.prepare_filename(data)
-        return cls(discord.FFmpegPCMAudio(executable="C:/ffmpeg/bin/ffmpeg.exe", source=filename, **ffmpeg_options), data=data)
+        # Extract all songs from the playlist
+            songs = data['entries']
+            for song in songs:
+                filename = song['url'] if stream else ytdl.prepare_filename(song)
+                player = cls(discord.FFmpegPCMAudio(executable="C:/ffmpeg/bin/ffmpeg.exe", source=filename, **ffmpeg_options), data=song)
+                client.queue.append(player)
+            return player
+        else:
+            filename = data['url'] if stream else ytdl.prepare_filename(data)
+            return cls(discord.FFmpegPCMAudio(executable="C:/ffmpeg/bin/ffmpeg.exe", source=filename, **ffmpeg_options), data=data)
     
 class MyClient(discord.Client):
     def __init__(self, *, intents: discord.Intents):
@@ -76,13 +72,19 @@ class MyClient(discord.Client):
         await self.tree.sync(guild=MY_GUILD)
         await self.tree.sync()
 
-    async def play_next(self, interaction):
+    async def play_next(self, interaction, skipped=False):
+        print("play_next called")
         if self.queue:
+            print("Queue is not empty")
             player = self.queue.pop(0)
+            print(f"Playing next song: {player.title}")
             guild = interaction.guild
-            guild.voice_client.play(player, after=lambda e: asyncio.run_coroutine_threadsafe(self.play_next(interaction), self.loop))
+            guild.voice_client.play(player, after=lambda e: asyncio.run_coroutine_threadsafe(self.play_next(interaction, skipped=True), self.loop))
+            if not skipped:
+                await interaction.followup.send(f"Playing {player.title}")
         else:
-            await interaction.response.send_message("No more songs in queue")
+            print("Queue is empty")
+            await interaction.followup.send("No more songs in queue")
 
 intents = discord.Intents.default()
 client = MyClient(intents=intents)
@@ -98,19 +100,19 @@ async def entrar(interaction: discord.Interaction):
         await interaction.response.send_message("You must be in a voice channel to use this command")
 
 
-client.queue = []
-
-@client.tree.command()
 @app_commands.describe(
     url="URL to play"
 )
+@client.tree.command()
 async def reproducir(interaction: discord.Interaction, url: str):
     """ plays a url """
-    await interaction.response.send_message(f"Attempting to play {url}")
+    await interaction.response.defer()
     player = await YTDLSource.from_url(url, stream=True)
     client.queue.append(player)
     if not client.current_voice_channel.is_playing():
-        await client.play_next(interaction)
+        await client.play_next(interaction, interaction.response)
+    await interaction.followup.send(f"Attempting to play {url}")
+    await interaction.followup.send(f"Playing {player.title}")
 
 @client.tree.command()
 async def pause(interaction: discord.Interaction):
@@ -148,11 +150,15 @@ async def stop(interaction: discord.Interaction):
 
 @client.tree.command()
 async def skip(interaction: discord.Interaction):
-    """ Skips the current song """
+    print("skip command called")
     if client.current_voice_channel and client.current_voice_channel.is_playing():
-        await interaction.response.send_message("Skipping to the next song...")
+        print("Stopping current song")
         client.current_voice_channel.stop()
-        await client.play_next(interaction)
+        if client.queue:
+            await client.play_next(interaction, skipped=True)
+            await interaction.response.send_message("Skipped to the next song!")
+        else:
+            await interaction.response.send_message("No more songs in queue. Stopping music.")
     else:
         await interaction.response.send_message("No hay canción actualmente en reproducción")
 
