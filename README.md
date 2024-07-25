@@ -55,7 +55,7 @@ Podes tambien ejecutar el siguiente comando para instalar todas las bibliotecas 
 <h3>pip install -r requirements.txt<h3>
 
 
-<p>este bot es un proyecto personal de codigo abierto. hecho para disfrutar de musica con mis amigos en los canales de discord que frecuento. voy a trabajar en que el bot funcione incluso si discord es actualizado.</p>
+<p> este bot es un proyecto personal de codigo abierto. hecho para disfrutar de musica con mis amigos en los canales de discord que frecuento. voy a trabajar en que el bot funcione incluso si discord es actualizado. </p>
 
 # COMO USAR
 
@@ -92,4 +92,4 @@ Disfruta del bot.
 
 PD IMPORTANTE :
 
-RECORDA DE INSTALAR PYTHON 3.12 Y AGREGAR AL .PATH PARA PODER CORRER EL SCRIPT DESDE CONSOLA.
+RECORDA DE INSTALAR PYTHON 3.12 Y AGREGAR AL .PATH (en la instalación) PARA PODER CORRER EL SCRIPT DESDE CONSOLA.
