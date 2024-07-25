@@ -50,6 +50,10 @@ Librerias necesarias para correr el bot:
 <li>yt-dlp</li>
 <li>python-decouple</li>
 
+Podes tambien ejecutar el siguiente comando para instalar todas las bibliotecas mencionadas:
+
+<h3>pip install -r requirements.txt<h3>
+
 
 <p>este bot es un proyecto personal de codigo abierto. hecho para disfrutar de musica con mis amigos en los canales de discord que frecuento. voy a trabajar en que el bot funcione incluso si discord es actualizado.</p>
 
